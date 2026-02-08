@@ -93,7 +93,7 @@ From there, you can:
 
 | Variable | Requirement | Description |
 |----------|-------------|-------------|
-| `DB_TYPE` | Optional | `mongodb`, `postgres`, or `mysql` (Default: `mongodb`) |
+| `DB_TYPE` | **Required**  | `mongodb`, `postgres`, or `mysql` (Default: `mongodb`) |
 | `DB_URI` | **Required** | Your database connection string. |
 | `MAIL_HOST` | Optional | Default SMTP Host (Fallback). |
 | `MAIL_PORT` | Optional | Default SMTP Port (Default: `587`). |
