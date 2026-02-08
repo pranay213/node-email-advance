@@ -1,100 +1,67 @@
-# Node.js Email Service
+# @pranay/mailer-advance
 
-A complete Node.js + Express backend for sending emails using Nodemailer with dynamic SMTP fallback support.
+Advanced Node.js email service with dynamic SMTP configuration, multi-database support (MongoDB/PostgreSQL/MySQL), and a built-in UI.
 
-## Overview
+## Features
 
-This service provides a simple API to send emails. It follows a strict fallback logic:
-1. Load SMTP configuration from `.env` by default.
-2. If dynamic `smtp` configuration is passed in the request body, use it.
-3. If no dynamic config is provided, fallback strictly to `.env`.
+- **Multi-DB Support**: Store SMTP settings in MongoDB, PostgreSQL, or MySQL.
+- **Dynamic Configuration**: Change SMTP servers on-the-fly via API or UI.
+- **Built-in UI**: Modern, dark-mode interface for sending emails and managing configurations.
+- **Secure**: TLS support with explicit control over certificate validation.
+- **Attachments**: Full support for file attachments and embedded images.
 
-## Setup Instructions
+## Quick Start
 
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
+### 1. Installation
 
-2. Configure your environment variables in `.env`:
-   ```env
-   PORT=3000
-   MAIL_HOST=smtp.example.com
-   MAIL_PORT=587
-   MAIL_SECURE=false
-   MAIL_USER=your_email@example.com
-   MAIL_PASS=your_password
-   MAIL_FROM_NAME="Email Service"
-   MAIL_FROM_EMAIL=noreply@example.com
-   ```
-
-3. Start the server (Production):
-   ```bash
-   npm start
-   ```
-
-4. Start the server (Development with auto-reload):
-   ```bash
-   npm run dev
-   ```
-
-5. Build for production:
-   ```bash
-   npm run build
-   ```
-
-6. Run using Docker:
-   ```bash
-   docker-compose up --build
-   ```
-
-## API Documentation
-
-The API is documented using Swagger. Once the server is running, you can access the documentation at:
-`http://localhost:3000/api-docs`
-
-## SMTP Configuration
-
-You can manage SMTP configurations via the API or the UI:
-- **UI**: `http://localhost:3000/config.html`
-- **API (POST)**: `/api/config`
-
-### POST `/api/contact`
-
-#### Request Body (Multipart/Form-Data)
-```text
-name: John Doe
-email: john@example.com
-message: Hello from contact form!
-configId: marketing-smtp (ID of SMTP config saved via /api/config)
-attachments: [File(s)] (Optional)
+```bash
+git clone https://github.com/your-repo/mailer-advance
+cd mailer-advance
+npm install
 ```
 
-## Latest Implementation Details
-- **Routes**: Added `POST /api/contact` in `src/routes/contact.routes.js` with Swagger JSDoc and `multer` support for file uploads.
-- **Documentation**: Integrated Swagger UI reachable at `/api-docs`. The server URL is now dynamically loaded from the `PORT` or `SERVER_URL` in `.env`.
-- **Security**: SMTP credentials are now hidden in the API payload by using a `configId` lookup from a mock database service.
-- **Features**:
-  - **Multi-DB Support**: Use MongoDB, PostgreSQL, or MySQL.
-  - **Dynamic SMTP Configuration**: Manage multiple SMTP settings via API and UI.
-  - **Premium User Interface**: Dedicated pages for sending emails, adding configurations, and listing saved settings.
-  - **TLS & Security**: Explicit control over TLS flags and certificate validation.
-  - **Attachments**: Support for sending emails with attachments and embedded images.
-  - **Automatic Reloading**: Server restarts automatically when `.env` changes.
-- **Build System**: Added `esbuild` for fast bundling and a multistage `Dockerfile` for production-ready containerization.
+### 2. Environment Setup
 
-## Fallback Logic
-The `MailService` attempts to resolve the SMTP configuration:
-1. If `configId` is provided, it looks up the credentials in the database (Mock DB).
-2. If `configId` is not provided or not found, it falls back strictly to the credentials defined in the `.env` file.
+Create a `.env` file in the root:
 
-## Attachment and Image Support
-- **Attachments**: Any file uploaded via the `attachments` field will be sent as a mail attachment.
-- **Embedded Images**: Files can be embedded in HTML using the `cid` value (e.g., `<img src="cid:filename.png">`). The service automatically maps uploaded filenames to CIDs.
+```bash
+PORT=3000
+DB_TYPE=mongodb # options: mongodb, postgres, mysql
+DB_URI=mongodb://localhost:27017/mail_service_db
 
-## Project Structure
-- `src/config/`: Configuration loader.
-- `src/services/`: Core logic for sending emails.
-- `src/routes/`: API endpoints.
-- `public/`: Frontend contact form.
-# node-email-advance
+# Default SMTP (Fallback)
+MAIL_HOST=smtp.example.com
+MAIL_PORT=587
+MAIL_SECURE=false
+MAIL_USER=user@example.com
+MAIL_PASS=password
+MAIL_FROM_NAME="Service Name"
+MAIL_FROM_EMAIL=noreply@example.com
+```
+
+### 3. Run the Service
+
+```bash
+# Development
+npm run dev
+
+# Production
+npm run build
+npm start
+```
+
+## Usage
+
+### User Interface
+- **Send Email**: `http://localhost:3000/contact.html`
+- **List Configs**: `http://localhost:3000/list-configs.html`
+- **Add Config**: `http://localhost:3000/config.html`
+
+### API Headers
+Send a `POST` request to `/api/contact` with:
+- `configId`: (Optional) ID of a saved SMTP configuration.
+- `to`: Recipient email.
+- `attachments`: Files (multipart/form-data).
+
+## License
+MIT

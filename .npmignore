@@ -1,0 +1,20 @@
+# Source and Tests
+src/
+public/
+tests/
+Dockerfile
+docker-compose.yml
+
+# Config
+.env
+.env.example
+.gitignore
+.npmignore
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
