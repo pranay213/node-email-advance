@@ -1,4 +1,4 @@
-# 🚀 mailer-advance v6.0
+# 🚀 mailer-advance v7.0
 
 [![npm version](https://img.shields.io/npm/v/mailer-advance.svg?style=flat-square)](https://www.npmjs.com/package/mailer-advance)
 [![license](https://img.shields.io/npm/l/mailer-advance.svg?style=flat-square)](https://www.npmjs.com/package/mailer-advance)
@@ -8,10 +8,10 @@
 
 ---
 
-## ✨ v6.0 Highlights
+## ✨ v7.0 Highlights
 
 - ⚡ **Smart Connection**: `connect()` automatically falls back to `process.env.DB_URI`.
-- 📖 **Interactive Swagger UI**: Explore and test all APIs at `/api-docs`.
+- 📖 **Interactive Swagger UI**: Now fully supported in both standalone and **library mode**.
 - 🗄️ **Multi-DB Persistence**: Support for MongoDB, Postgres, and MySQL.
 - 🔄 **Hot-Swapping**: Switch SMTP credentials at runtime via the Dashboard.
 - 🛡️ **Production Ready**: Full STARTTLS support and descriptive error guards.
@@ -33,6 +33,7 @@ import express from 'express';
 import { 
     contactRoutes, 
     configRoutes, 
+    swaggerRoutes, // ✨ New in v7.0
     dbService, 
     DatabaseFactory 
 } from 'mailer-advance';
@@ -45,9 +46,10 @@ const repository = DatabaseFactory.createRepository(process.env.DB_TYPE || 'mong
 await repository.connect(); 
 dbService.setRepository(repository);
 
-// 2. Mount API Routes
+// 2. Mount API Routes & UI
 app.use('/api/mail', contactRoutes);
 app.use('/api/config', configRoutes);
+app.use('/api-docs', swaggerRoutes); // ✨ Mount interactive docs
 
 app.listen(3000, () => {
     console.log('🚀 Engine active at http://localhost:3000');
@@ -59,9 +61,12 @@ app.listen(3000, () => {
 
 ## 📚 Interactive API Documentation (Swagger)
 
-V6.0.0 introduces a fully integrated **Swagger UI** for easier development and testing. Once your server is running, navigate to:
+V7.0.0 enables the **Swagger UI** for library users. Unlike the standalone server where it's pre-mounted, library consumers must explicitly mount it:
 
-👉 **`http://localhost:3000/api-docs`**
+👉 **`app.use('/api-docs', swaggerRoutes);`**
+
+Once mounted, navigate to:
+**`http://localhost:3000/api-docs`**
 
 From there, you can:
 - 🔍 **Explore**: See all available endpoints and their data structures.
