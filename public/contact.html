@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Email - Email Service</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --input-bg: rgba(15, 23, 42, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .file-input-wrapper {
+            margin-bottom: 1.5rem;
+        }
+
+        .file-input-label {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed var(--border);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: block;
+        }
+
+        .file-input-label:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        #attachments {
+            display: none;
+        }
+
+        .file-list {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 1rem;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+        }
+
+        #status {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+            border-radius: 10px;
+            padding: 0.75rem;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">EmailService Pro</div>
+        <div class="nav-links">
+            <a href="contact.html" style="color: var(--primary)">Send Email</a>
+            <a href="list-configs.html">Configurations</a>
+            <a href="config.html">Add New</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <h1>Send Message</h1>
+            <p class="subtitle">Quickly test your SMTP delivery</p>
+
+            <form id="contactForm">
+                <div class="form-group">
+                    <label for="configId">SMTP Configuration ID (Optional)</label>
+                    <input type="text" id="configId" placeholder="Leave blank for default .env config">
+                </div>
+
+                <div class="form-group">
+                    <label for="to">Recipient Email</label>
+                    <input type="email" id="to" placeholder="recipient@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Sender Name</label>
+                    <input type="text" id="name" placeholder="John Doe" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Sender Email</label>
+                    <input type="email" id="email" placeholder="sender@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" placeholder="Hello from the Email Service!"></textarea>
+                </div>
+
+                <div class="file-input-wrapper">
+                    <label class="file-input-label" for="attachments">
+                        <div>📁 Click to upload attachments</div>
+                        <div style="font-size: 0.8rem; margin-top: 0.5rem;">Images can be used with &lt;img
+                            src="cid:filename.jpg"&gt;</div>
+                    </label>
+                    <input type="file" id="attachments" multiple>
+                    <div id="fileList" class="file-list"></div>
+                </div>
+
+                <button type="submit">Send Email</button>
+            </form>
+            <div id="status"></div>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('attachments');
+        const fileList = document.getElementById('fileList');
+        const form = document.getElementById('contactForm');
+        const status = document.getElementById('status');
+
+        // Auto-fill configId from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const configIdParam = urlParams.get('configId');
+        if (configIdParam) {
+            document.getElementById('configId').value = configIdParam;
+        }
+
+        fileInput.addEventListener('change', () => {
+            fileList.innerHTML = Array.from(fileInput.files)
+                .map(file => `<div>✓ ${file.name} (${(file.size / 1024).toFixed(1)} KB)</div>`)
+                .join('');
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            status.style.display = 'block';
+            status.textContent = 'Sending email...';
+            status.style.background = 'rgba(255, 255, 255, 0.05)';
+            status.style.color = 'var(--text)';
+
+            const formData = new FormData();
+            formData.append('name', document.getElementById('name').value);
+            formData.append('email', document.getElementById('email').value);
+            formData.append('to', document.getElementById('to').value);
+            formData.append('message', document.getElementById('message').value);
+            formData.append('configId', document.getElementById('configId').value);
+
+            for (const file of fileInput.files) {
+                formData.append('attachments', file);
+            }
+
+            try {
+                const response = await fetch('/api/contact', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    status.textContent = 'Email sent successfully!';
+                    status.style.color = '#10b981';
+                    status.style.background = 'rgba(16, 185, 129, 0.1)';
+                    form.reset();
+                    fileList.innerHTML = '';
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                status.textContent = 'Error: ' + error.message;
+                status.style.color = '#ef4444';
+                status.style.background = 'rgba(239, 68, 68, 0.1)';
+            }
+        });
+    </script>
+</body>
+
+</html>

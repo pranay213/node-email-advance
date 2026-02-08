@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage SMTP Configurations - Email Service</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --success: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .config-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .config-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .config-id {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .config-id::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+        }
+
+        .config-details {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            flex: 1;
+            text-align: center;
+            padding: 0.6rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--card);
+            border-radius: 16px;
+            border: 2px dashed var(--border);
+        }
+
+        .empty-state h3 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">EmailService Pro</div>
+        <div class="nav-links">
+            <a href="contact.html">Send Email</a>
+            <a href="list-configs.html" style="color: var(--primary)">Configurations</a>
+            <a href="config.html">Add New</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header-actions">
+            <h1>SMTP Configurations</h1>
+            <a href="config.html" class="btn">+ Add New</a>
+        </div>
+
+        <div id="configGrid" class="config-grid">
+            <div class="loading">Loading configurations...</div>
+        </div>
+    </div>
+
+    <script>
+        async function loadConfigs() {
+            const grid = document.getElementById('configGrid');
+            try {
+                const response = await fetch('/api/config');
+                const result = await response.json();
+
+                if (result.success && result.data.length > 0) {
+                    grid.innerHTML = '';
+                    result.data.forEach(config => {
+                        const card = document.createElement('div');
+                        card.className = 'config-card';
+                        card.innerHTML = `
+                            <div class="config-id">${config.configId}</div>
+                            <div class="config-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">Host:</span>
+                                    <span>${config.host}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Port:</span>
+                                    <span>${config.port}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">User:</span>
+                                    <span>${config.auth.user}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">TLS:</span>
+                                    <span>${config.tls?.enabled !== false ? 'Enabled' : 'Disabled'}</span>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <a href="contact.html?configId=${config.configId}" class="btn-outline">Use in Form</a>
+                                <a href="config.html?edit=${config.configId}" class="btn-outline">Edit</a>
+                            </div>
+                        `;
+                        grid.appendChild(card);
+                    });
+                } else {
+                    grid.innerHTML = `
+                        <div class="empty-state">
+                            <h3>No configurations found</h3>
+                            <p>Get started by creating your first SMTP configuration.</p>
+                            <br>
+                            <a href="config.html" class="btn">Create Configuration</a>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                grid.innerHTML = `<div class="loading" style="color: #ef4444">Error loading configurations. Please try again later.</div>`;
+                console.error('Error:', error);
+            }
+        }
+
+        loadConfigs();
+    </script>
+</body>
+
+</html>
