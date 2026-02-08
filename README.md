@@ -21,33 +21,64 @@ An advanced, production-ready Node.js email service with dynamic SMTP configurat
 npm install mailer-advance
 ```
 
+> [!IMPORTANT]
+> This package is built using **ES Modules (ESM)**. Ensure your `package.json` includes `"type": "module"` or use the `.mjs` extension.
+
 ## 🛠 Usage
 
 ### 1. Integration as a Library (Recommended)
 
-Import routes and services directly into your existing Express app:
+Import routes and services directly into your existing Express app. All components are exported as named exports for maximum flexibility.
 
 ```javascript
 import express from 'express';
-import { contactRoutes, configRoutes, mailService } from 'mailer-advance';
+import { 
+    contactRoutes, 
+    configRoutes, 
+    mailService, 
+    dbService, 
+    DatabaseFactory 
+} from 'mailer-advance';
 
 const app = express();
 app.use(express.json());
 
-// 1. Mount management routes
+// --- Database Initialization (Required for Programmatic Use) ---
+const initDB = async () => {
+    // 1. Create a repository (mongodb, postgres, or mysql)
+    const repository = DatabaseFactory.createRepository(process.env.DB_TYPE || 'mongodb');
+    
+    // 2. Connect to your database
+    await repository.connect(process.env.DB_URI);
+    
+    // 3. Register it with the shared dbService
+    dbService.setRepository(repository);
+};
+
+initDB().catch(console.error);
+
+// --- Mounting Routes ---
+// These routes handle contact form submissions and SMTP configuration management
 app.use('/api/mail', contactRoutes);
 app.use('/api/config', configRoutes);
 
-// 2. Or use the mail service programmatically
-const sendTest = async () => {
-    await mailService.sendEmail({
-        to: 'recipient@example.com',
-        subject: 'Hello World',
-        text: 'Sent via mailer-advance'
-    });
-};
+// --- Programmatic Email Sending ---
+app.post('/send-custom', async (req, res) => {
+    try {
+        await mailService.sendEmail({
+            to: req.body.to,
+            subject: 'Custom Notification',
+            text: 'This was sent using the mailService directly!',
+            // Optional: configId to use a specific stored SMTP configuration
+            // configId: 'my-custom-smtp' 
+        });
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 
-app.listen(3000);
+app.listen(3000, () => console.log('Server running on port 3000'));
 ```
 
 ### 2. Standalone Service
@@ -56,7 +87,7 @@ If you've cloned the repository, you can run it as a standalone server:
 
 ```bash
 npm install
-npm run dev # Starts on http://localhost:3000
+npm run dev # Starts on http://localhost:3000 (pre-configured to auto-init DB)
 ```
 
 ## ⚙️ Configuration
@@ -70,7 +101,7 @@ PORT=3000
 DB_TYPE=mongodb # options: mongodb, postgres, mysql
 DB_URI=mongodb://localhost:27017/mail_service_db
 
-# Default SMTP Fallback
+# Default SMTP Fallback (Internal use and initial setup)
 MAIL_HOST=smtp.example.com
 MAIL_PORT=587
 MAIL_SECURE=false
@@ -89,7 +120,7 @@ When running the service, visit:
 
 ## 📄 API Reference
 
-### `POST /api/contact`
+### `POST /api/mail/contact`
 Send an email using standard or dynamic config.
 - **Body**: `name`, `email`, `to`, `message`, `configId` (optional).
 - **Files**: Supports `attachments` (multipart/form-data).
