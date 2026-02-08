@@ -4,6 +4,9 @@ import { BaseRepository } from './base.repository.js';
 
 export class MongoRepository extends BaseRepository {
     async connect(uri) {
+        if (!uri || typeof uri !== 'string') {
+            throw new Error('Database connection URI is required for MongoDB repository');
+        }
         await mongoose.connect(uri);
         console.log('Connected to MongoDB');
     }

@@ -8,6 +8,9 @@ export class SqlRepository extends BaseRepository {
     }
 
     async connect(uri) {
+        if (!uri || typeof uri !== 'string') {
+            throw new Error(`Database connection URI is required for SQL repository (${this.dialect})`);
+        }
         this.sequelize = new Sequelize(uri, {
             dialect: this.dialect,
             logging: false
