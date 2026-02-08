@@ -1,6 +1,6 @@
 {
   "name": "mailer-advance",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "Advanced Node.js email service with dynamic SMTP configuration, multi-database support (MongoDB/SQL), and a built-in UI.",
   "main": "src/server.js",
   "type": "module",
@@ -8,7 +8,8 @@
     "start": "node src/server.js",
     "dev": "nodemon --watch .env --watch src src/server.js",
     "build": "esbuild src/server.js --bundle --platform=node --format=esm --target=node20 --outfile=dist/server.js --external:express --external:nodemailer --external:dotenv --external:cors",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "release": "git add . && git commit -m 'chore: release v1.0.4' && git push && npm publish"
   },
   "publishConfig": {
     "access": "public"
