@@ -1,6 +1,4 @@
-# Source and Tests
-src/
-public/
+# Tests
 tests/
 Dockerfile
 docker-compose.yml

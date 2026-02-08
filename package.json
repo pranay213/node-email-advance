@@ -9,7 +9,7 @@
     "dev": "nodemon --watch .env --watch src src/server.js",
     "build": "esbuild src/server.js --bundle --platform=node --format=esm --target=node20 --outfile=dist/server.js --external:express --external:nodemailer --external:dotenv --external:cors",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "release": "git add . && git commit -m 'chore: release v1.0.4' && git push && npm publish"
+    "release": "git add . && git commit -m \"chore: release $(node -p \"require('./package.json').version\")\" && git push && npm publish"
   },
   "publishConfig": {
     "access": "public"
