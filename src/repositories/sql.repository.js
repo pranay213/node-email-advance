@@ -8,10 +8,11 @@ export class SqlRepository extends BaseRepository {
     }
 
     async connect(uri) {
-        if (!uri || typeof uri !== 'string') {
-            throw new Error(`Database connection URI is required for SQL repository (${this.dialect})`);
+        const connectionUri = uri || process.env.DB_URI;
+        if (!connectionUri || typeof connectionUri !== 'string') {
+            throw new Error(`Database connection URI is required for SQL repository (${this.dialect}). Please provide it as a parameter to connect() or set the DB_URI environment variable.`);
         }
-        this.sequelize = new Sequelize(uri, {
+        this.sequelize = new Sequelize(connectionUri, {
             dialect: this.dialect,
             logging: false
         });

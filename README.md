@@ -1,22 +1,20 @@
-# 🚀 mailer-advance v4.0
+# 🚀 mailer-advance v5.0
 
 [![npm version](https://img.shields.io/npm/v/mailer-advance.svg?style=flat-square)](https://www.npmjs.com/package/mailer-advance)
 [![license](https://img.shields.io/npm/l/mailer-advance.svg?style=flat-square)](https://www.npmjs.com/package/mailer-advance)
 [![Node version](https://img.shields.io/badge/node-%3E%3D20-brightgreen?style=flat-square)](https://nodejs.org)
 
-**mailer-advance** is a high-performance, production-ready Node.js email engine. It provides dynamic SMTP management (hot-swapping), multi-database persistence (MongoDB, PostgreSQL, MySQL), and a premium, glassmorphic built-in UI for system administration.
+**mailer-advance** is a high-performance Node.js email engine with absolute flexibility. It features dynamic SMTP hot-swapping, multi-DB persistence, and a premium "management-in-a-box" UI.
 
 ---
 
-## ✨ Key Features
+## ✨ v5.0 Highlights
 
-- 🗄️ **Multi-DB Support**: Store SMTP configurations in MongoDB, Postgres, or MySQL.
-- 🔄 **Hot-Swapping**: Switch SMTP servers at runtime via API or Dashboard without restarts.
-- 🎨 **Premium UI**: Built-in dark-mode dashboard for sending tests and managing profiles.
-- 🛡️ **Robust Security**: Full STARTTLS/SSL/TLS support with certificate pinning/validation.
-- 📎 **Rich Emails**: Native support for attachments and CID-mapped inline images.
-- 📦 **Zero Overhead**: Optimized ESM-only package (~12KB) designed for high scale.
-- 📖 **Swagger Ready**: Auto-generated OpenApi documentation served at `/api-docs`.
+- ⚡ **Smart Connection**: No need to pass URIs manually. `connect()` now automatically falls back to `process.env.DB_URI`.
+- 🗄️ **Multi-DB Persistence**: Store configurations in MongoDB, Postgres, or MySQL.
+- 🔄 **Zero-Restart Swapping**: Switch SMTP credentials at runtime via the Dashboard.
+- 🛡️ **Production Ready**: Full STARTTLS support and descriptive error guards.
+- 📖 **Swagger UI**: API docs auto-served at `/api-docs`.
 
 ---
 
@@ -26,14 +24,9 @@
 npm install mailer-advance
 ```
 
-> [!IMPORTANT]
-> **ESM Only**: This package requires `"type": "module"` in your `package.json`.
-
 ---
 
 ## 🚀 Quick Start (Library Mode)
-
-Integrate the engine into your Express app.
 
 ```javascript
 import express from 'express';
@@ -47,18 +40,16 @@ import {
 const app = express();
 app.use(express.json());
 
-// 1. Initialize Persistence (Required for UI/Storage)
+// 1. Initialize Persistence (Smart Fallback to process.env.DB_URI)
 const repository = DatabaseFactory.createRepository(process.env.DB_TYPE || 'mongodb');
-await repository.connect(process.env.DB_URI); // throws Error if URI is missing
+await repository.connect(); // ✨ Automagically uses DB_URI from .env
 dbService.setRepository(repository);
 
-// 2. Mount API & UI Routes
+// 2. Mount API Routes
 app.use('/api/mail', contactRoutes);
 app.use('/api/config', configRoutes);
 
-app.listen(3000, () => {
-    console.log('🚀 Mailer engine ready at http://localhost:3000');
-});
+app.listen(3000, () => console.log('🚀 Engine active at http://localhost:3000'));
 ```
 
 ---
@@ -68,42 +59,41 @@ app.listen(3000, () => {
 | Variable | Requirement | Description |
 |----------|-------------|-------------|
 | `DB_TYPE` | Optional | `mongodb`, `postgres`, or `mysql` (Default: `mongodb`) |
-| `DB_URI` | **Required** | Connection string for your chosen database. |
-| `PORT` | Optional | Port for the standalone server (Default: `3000`). |
-| `MAIL_HOST` | Optional | Fallback SMTP Host if no dynamic config is found. |
-| `MAIL_PORT` | Optional | Fallback SMTP Port (Default: `587`). |
-| `MAIL_SECURE` | Optional | `true` for Port 465, `false` for 587/STARTTLS. |
-| `MAIL_USER` | Optional | Fallback SMTP Username. |
-| `MAIL_PASS` | Optional | Fallback SMTP Password. |
+| `DB_URI` | **Required** | Your database connection string. |
+| `MAIL_HOST` | Optional | Default SMTP Host (Fallback). |
+| `MAIL_PORT` | Optional | Default SMTP Port (Default: `587`). |
 
-### 💡 Configuration Hierarchy
-1. If a `configId` is passed in an API call, it uses the **Database Stored SMTP**.
-2. If no `configId` exists, it falls back to **Environment Variables** (`MAIL_HOST`, etc.).
-3. If neither exists, the request will fail.
+### 💡 The .env Setup Guide
+For the engine to function correctly as a library, ensure your project's `.env` contains:
+```env
+# Database
+DB_TYPE=mongodb
+DB_URI=mongodb://127.0.0.1:27017/my_mailer_db
+
+# Fallback SMTP (Initial Setup)
+MAIL_HOST=smtp.your-provider.com
+MAIL_PORT=587
+MAIL_USER=admin@example.com
+MAIL_PASS=your-secure-password
+```
 
 ---
 
-## 🔒 Security Checklist
+## 🔒 Security & Best Practices
 
-To ensure your email service is secure in production, verify the following:
-
-- [ ] **Database URI**: Ensure `DB_URI` is stored in a secure `.env` file and never committed to version control.
-- [ ] **TLS Validation**: By default, `rejectUnauthorized` is `true`. For development with self-signed certs, set `MAIL_TLS_REJECT_UNAUTHORIZED=false`.
-- [ ] **App Privacy**: If you mount the UI (`/contact.html`, etc.), ensure it is behind your own authentication middleware.
-- [ ] **Secrets**: Use [Dotenvx](https://dotenvx.com) or similar tools to encrypt your production secrets.
+- **App Privacy**: Always wrap the mailer routes/UI with your own authentication middleware in production.
+- **TLS validation**: Ensure `rejectUnauthorized` is `true` for production SMTP connections.
+- **Secrets**: Encrypt your `.env` files using tools like [Dotenvx](https://dotenvx.com).
 
 ---
 
 ## 🛠 Troubleshooting
 
 ### `Error: Database connection URI is required`
-This error occurs in **v4.0.0+** if you attempt to connect a repository without a valid `DB_URI`.
-- **Fix**: Add `DB_URI=mongodb://your-ip:27017/dbname` (or equivalent) to your `.env` file.
-- **Why?**: Persistence is mandatory for the management UI and dynamic context swapping.
-
-### SMTP Connection Failures
-- Verify `MAIL_PORT` (usually `587` for STARTTLS or `465` for SSL).
-- Ensure `MAIL_SECURE` is `true` ONLY for port `465`.
+This occurs if `process.env.DB_URI` is undefined.
+1. Ensure your `.env` file exists in the root of your project.
+2. Verify you are using `dotenv.config()` BEFORE initializing the mailer.
+3. Check the variable name is exactly `DB_URI`.
 
 ---
 

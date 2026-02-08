@@ -4,10 +4,11 @@ import { BaseRepository } from './base.repository.js';
 
 export class MongoRepository extends BaseRepository {
     async connect(uri) {
-        if (!uri || typeof uri !== 'string') {
-            throw new Error('Database connection URI is required for MongoDB repository');
+        const connectionUri = uri || process.env.DB_URI;
+        if (!connectionUri || typeof connectionUri !== 'string') {
+            throw new Error('Database connection URI is required. Please provide it as a parameter to connect() or set the DB_URI environment variable.');
         }
-        await mongoose.connect(uri);
+        await mongoose.connect(connectionUri);
         console.log('Connected to MongoDB');
     }
 
