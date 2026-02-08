@@ -1,19 +1,24 @@
-# mailer-advance
+# 🚀 mailer-advance v2.0
 
-[![npm version](https://img.shields.io/npm/v/mailer-advance.svg)](https://www.npmjs.com/package/mailer-advance)
-[![license](https://img.shields.io/npm/l/mailer-advance.svg)](https://www.npmjs.com/package/mailer-advance)
+[![npm version](https://img.shields.io/npm/v/mailer-advance.svg?style=flat-square)](https://www.npmjs.com/package/mailer-advance)
+[![license](https://img.shields.io/npm/l/mailer-advance.svg?style=flat-square)](https://www.npmjs.com/package/mailer-advance)
+[![Node version](https://img.shields.io/badge/node-%3E%3D20-brightgreen?style=flat-square)](https://nodejs.org)
 
-An advanced, production-ready Node.js email service with dynamic SMTP configuration, multi-database support (MongoDB, PostgreSQL, MySQL), and a premium built-in UI.
+**mailer-advance** is a high-performance, production-ready Node.js email engine. It provides dynamic SMTP management, multi-database persistence (MongoDB, PostgreSQL, MySQL), and a premium, glassmorphic built-in UI for administration.
 
-## 🚀 Features
+---
 
-- **Multi-Database Support**: Seamlessly store SMTP configurations in MongoDB, PostgreSQL, or MySQL.
-- **Dynamic SMTP**: Switch SMTP servers at runtime via API or the built-in management UI.
-- **Premium UI**: Modern dark-mode interfaces for sending emails, listing configurations, and editing settings.
-- **STARTTLS & SSL/TLS**: Full control over secure connections and certificate validation.
-- **Rich Emails**: Support for file attachments and embedded images ($cid$ mapping).
-- **Developer Friendly**: Exported as a reusable module for any Express/Node.js application.
-- **Ultra Lightweight**: Optimized package size (~11KB) with zero build overhead.
+## ✨ Features
+
+- 🗄️ **Persistence**: Multi-database support for storing SMTP configs (MongoDB, Postgres, MySQL).
+- 🔄 **Hot-Swapping**: Switch SMTP servers at runtime via API or the Admin Dashboard.
+- 🎨 **Premium UI**: Built-in dark-mode dashboard for sending tests and managing configs.
+- 🔒 **Secure by Design**: Full STARTTLS/SSL/TLS support with configurable certificate validation.
+- 📎 **Rich Media**: Support for attachments and inline images ($cid$ mapping).
+- 📦 **Zero Overhead**: Ultra-lightweight (~12KB) ESM-only package with minimal dependencies.
+- 📖 **Swagger Included**: Auto-generated API documentation for easy integration.
+
+---
 
 ## 📦 Installation
 
@@ -22,13 +27,13 @@ npm install mailer-advance
 ```
 
 > [!IMPORTANT]
-> This package is built using **ES Modules (ESM)**. Ensure your `package.json` includes `"type": "module"` or use the `.mjs` extension.
+> **ESM Only**: This package requires `"type": "module"` in your `package.json`.
 
-## 🛠 Usage
+---
 
-### 1. Integration as a Library (Recommended)
+## � Quick Start (Library Mode)
 
-Import routes and services directly into your existing Express app. All components are exported as named exports for maximum flexibility.
+Integrate the email engine into your existing Express app in less than 2 minutes.
 
 ```javascript
 import express from 'express';
@@ -43,94 +48,57 @@ import {
 const app = express();
 app.use(express.json());
 
-// --- Database Initialization (Required for Programmatic Use) ---
-const initDB = async () => {
-    // 1. Create a repository (mongodb, postgres, or mysql)
-    const repository = DatabaseFactory.createRepository(process.env.DB_TYPE || 'mongodb');
-    
-    // 2. Connect to your database
-    await repository.connect(process.env.DB_URI);
-    
-    // 3. Register it with the shared dbService
-    dbService.setRepository(repository);
-};
+// 1. Initialize Database
+const repository = DatabaseFactory.createRepository('mongodb'); // or 'postgres', 'mysql'
+await repository.connect(process.env.DB_URI);
+dbService.setRepository(repository);
 
-initDB().catch(console.error);
+// 2. Mount Routes
+app.use('/api/mail', contactRoutes);    // Form submissions
+app.use('/api/config', configRoutes);  // SMTP Management
 
-// --- Mounting Routes ---
-// These routes handle contact form submissions and SMTP configuration management
-app.use('/api/mail', contactRoutes);
-app.use('/api/config', configRoutes);
-
-// --- Programmatic Email Sending ---
-app.post('/send-custom', async (req, res) => {
-    try {
-        await mailService.sendEmail({
-            to: req.body.to,
-            subject: 'Custom Notification',
-            text: 'This was sent using the mailService directly!',
-            // Optional: configId to use a specific stored SMTP configuration
-            // configId: 'my-custom-smtp' 
-        });
-        res.json({ success: true });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+// 3. Access Admin UI (Optional)
+// The UI is served relative to your static assets if configured
+app.listen(3000, () => {
+    console.log('🚀 Mailer engine ready at http://localhost:3000');
+    console.log('📖 Documentation: http://localhost:3000/api-docs');
 });
-
-app.listen(3000, () => console.log('Server running on port 3000'));
 ```
 
-### 2. Standalone Service
+---
 
-If you've cloned the repository, you can run it as a standalone server:
+## 🖥 Admin Dashboard
 
-```bash
-npm install
-npm run dev # Starts on http://localhost:3000 (pre-configured to auto-init DB)
-```
+When serving the package, the following tools are available:
 
-## ⚙️ Configuration
+- � **Send Test**: `http://localhost:3000/contact.html`
+- 📑 **Manage Configs**: `http://localhost:3000/list-configs.html`
+- ➕ **Add New**: `http://localhost:3000/config.html`
+- 📚 **Swagger Docs**: `http://localhost:3000/api-docs`
 
-The service uses Environment Variables for default settings. Create a `.env` file:
+---
 
-```env
-PORT=3000
+## ⚙️ Configuration (.env)
 
-# Database Configuration
-DB_TYPE=mongodb # options: mongodb, postgres, mysql
-DB_URI=mongodb://localhost:27017/mail_service_db
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PORT` | Server port | `3000` |
+| `DB_TYPE` | `mongodb`, `postgres`, `mysql` | `mongodb` |
+| `DB_URI` | Connection string | - |
+| `MAIL_HOST` | Fallback SMTP Host | - |
+| `MAIL_PORT` | Fallback SMTP Port | `587` |
 
-# Default SMTP Fallback (Internal use and initial setup)
-MAIL_HOST=smtp.example.com
-MAIL_PORT=587
-MAIL_SECURE=false
-MAIL_USER=your-user
-MAIL_PASS=your-password
-MAIL_FROM_NAME="System Name"
-MAIL_FROM_EMAIL=noreply@example.com
-```
+---
 
-## 🖥 Built-in UI
+## 🔄 Migration to v2.0.0
 
-When running the service, visit:
-- **`http://localhost:3000/contact.html`**: Send test emails with attachments.
-- **`http://localhost:3000/list-configs.html`**: View and manage saved SMTP profiles.
-- **`http://localhost:3000/config.html`**: Add or edit SMTP configurations.
-- **`http://localhost:3000/api-docs`**: Full OpenApi/Swagger documentation for all endpoints.
+V2 introduces breaking changes to improve library integration:
+1. **Named Exports**: All modules now use named exports instead of a single default export.
+2. **Relative UI Paths**: The built-in dashboard now uses relative API paths, allowing it to be mounted on any sub-path (e.g., `/admin/mailer/`).
+3. **Safety Guards**: `DbService` now throws descriptive errors if used before initialization.
 
-## 📄 API Reference
-
-### `POST /api/mail/contact`
-Send an email using standard or dynamic config.
-- **Body**: `name`, `email`, `to`, `message`, `configId` (optional).
-- **Files**: Supports `attachments` (multipart/form-data).
-
-### `GET /api/config`
-Returns a JSON list of all stored SMTP configurations.
-
-### `POST /api/config`
-Save or update an SMTP configuration profile.
+---
 
 ## 📜 License
-MIT © Pranay
+
+MIT © [Pranay](https://github.com/pranay213)
