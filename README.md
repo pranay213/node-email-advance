@@ -1,4 +1,4 @@
-# 🚀 mailer-advance v8.0
+# 🚀 mailer-advance v9.0
 
 [![npm version](https://img.shields.io/npm/v/mailer-advance.svg?style=flat-square)](https://www.npmjs.com/package/mailer-advance)
 [![license](https://img.shields.io/npm/l/mailer-advance.svg?style=flat-square)](https://www.npmjs.com/package/mailer-advance)
@@ -8,10 +8,24 @@
 
 ---
 
-## ✨ v7.0 Highlights
+## ⚡ Quick Start: Get Running in 60 Seconds
+
+1.  **Install**: `npm install mailer-advance`
+2.  **Configure**: Set `DB_URI` in your `.env`.
+3.  **Launch**:
+    ```javascript
+    import { DatabaseFactory, dbService } from 'mailer-advance';
+    const repo = DatabaseFactory.createRepository('mongodb');
+    await repo.connect(); // Automatically uses process.env.DB_URI
+    dbService.setRepository(repo);
+    ```
+
+---
+
+## ✨ v9.0 Highlights
 
 - ⚡ **Smart Connection**: `connect()` automatically falls back to `process.env.DB_URI`.
-- 📖 **Interactive Swagger UI**: Now fully supported in both standalone and **library mode**.
+- 📖 **Interactive Swagger UI**: Now fully supported with fixed asset paths.
 - 🗄️ **Multi-DB Persistence**: Support for MongoDB, Postgres, and MySQL.
 - 🔄 **Hot-Swapping**: Switch SMTP credentials at runtime via the Dashboard.
 - 🛡️ **Production Ready**: Full STARTTLS support and descriptive error guards.
@@ -33,7 +47,7 @@ import express from 'express';
 import { 
     contactRoutes, 
     configRoutes, 
-    swaggerRoutes, // ✨ New in v7.0
+    swaggerRoutes,
     dbService, 
     DatabaseFactory 
 } from 'mailer-advance';
@@ -46,10 +60,10 @@ const repository = DatabaseFactory.createRepository(process.env.DB_TYPE || 'mong
 await repository.connect(); 
 dbService.setRepository(repository);
 
-// 2. Mount API Routes & UI
-app.use('/api/mail', contactRoutes);
+// 2. Mount API Routes (Use these exact paths for Swagger compatibility)
+app.use('/api', contactRoutes); 
 app.use('/api/config', configRoutes);
-app.use('/api-docs', swaggerRoutes); // ✨ Mount interactive docs
+app.use('/api-docs', swaggerRoutes);
 
 app.listen(3000, () => {
     console.log('🚀 Engine active at http://localhost:3000');
@@ -61,7 +75,7 @@ app.listen(3000, () => {
 
 ## 📚 Interactive API Documentation (Swagger)
 
-V7.0.0 enables the **Swagger UI** for library users. Unlike the standalone server where it's pre-mounted, library consumers must explicitly mount it:
+V9.0.0 fixes the "No operations defined" error by ensuring consistent mount paths. Always mount the routes as shown in the Quick Start to maintain Swagger compatibility.
 
 👉 **`app.use('/api-docs', swaggerRoutes);`**
 

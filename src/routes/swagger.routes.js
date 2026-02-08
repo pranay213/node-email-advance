@@ -6,5 +6,8 @@ const router = express.Router();
 
 router.use('/', swaggerUi.serve);
 router.get('/', swaggerUi.setup(swaggerSpec));
+router.get('/swagger.json', (req, res) => {
+    res.json(swaggerSpec);
+});
 
 export default router;
