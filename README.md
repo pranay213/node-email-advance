@@ -52,16 +52,34 @@ npm start
 
 ## Usage
 
-### User Interface
+### 1. Standalone Service
 - **Send Email**: `http://localhost:3000/contact.html`
 - **List Configs**: `http://localhost:3000/list-configs.html`
 - **Add Config**: `http://localhost:3000/config.html`
 
-### API Headers
-Send a `POST` request to `/api/contact` with:
-- `configId`: (Optional) ID of a saved SMTP configuration.
-- `to`: Recipient email.
-- `attachments`: Files (multipart/form-data).
+### 2. Integration into your Node.js App
+You can use this package as a module in your existing Express application:
+
+```javascript
+import express from 'express';
+import { contactRoutes, configRoutes } from 'mailer-advance';
+
+const app = express();
+
+// Mount the mailer routes
+app.use('/api/mail', contactRoutes);
+app.use('/api/config', configRoutes);
+
+app.listen(3001);
+```
+
+### API Usage
+- `POST /api/contact`: Send email (supports attachments).
+- `GET /api/config`: List all SMTP configurations.
+- `POST /api/config`: Save/Update SMTP configuration.
+
+## Optimization
+The package size is optimized to be extremely lightweight (~KBs) by excluding build artifacts and dev-dependencies from the final NPM bundle.
 
 ## License
 MIT
