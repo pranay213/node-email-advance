@@ -1,4 +1,4 @@
-# 🚀 mailer-advance v9.0
+# 🚀 mailer-advance v10.0
 
 [![npm version](https://img.shields.io/npm/v/mailer-advance.svg?style=flat-square)](https://www.npmjs.com/package/mailer-advance)
 [![license](https://img.shields.io/npm/l/mailer-advance.svg?style=flat-square)](https://www.npmjs.com/package/mailer-advance)
