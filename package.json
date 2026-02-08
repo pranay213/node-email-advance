@@ -1,6 +1,6 @@
 {
   "name": "mailer-advance",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Advanced Node.js email service with dynamic SMTP configuration, multi-database support (MongoDB/SQL), and a built-in UI.",
   "main": "index.js",
   "type": "module",
