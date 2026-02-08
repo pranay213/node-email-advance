@@ -117,6 +117,7 @@ When running the service, visit:
 - **`http://localhost:3000/contact.html`**: Send test emails with attachments.
 - **`http://localhost:3000/list-configs.html`**: View and manage saved SMTP profiles.
 - **`http://localhost:3000/config.html`**: Add or edit SMTP configurations.
+- **`http://localhost:3000/api-docs`**: Full OpenApi/Swagger documentation for all endpoints.
 
 ## 📄 API Reference
 
