@@ -9,7 +9,9 @@ class DbService {
 
     async getSmtpConfig(configId) {
         try {
-            if (!this.repository) throw new Error('Repository not initialized');
+            if (!this.repository) {
+                throw new Error('Database repository not initialized. Please call dbService.setRepository(repository) before using this service.');
+            }
             return await this.repository.getSmtpConfig(configId);
         } catch (error) {
             console.error(`[DbService] Error fetching config ${configId}:`, error.message);
@@ -19,7 +21,9 @@ class DbService {
 
     async saveSmtpConfig(configId, config) {
         try {
-            if (!this.repository) throw new Error('Repository not initialized');
+            if (!this.repository) {
+                throw new Error('Database repository not initialized. Please call dbService.setRepository(repository) before using this service.');
+            }
             return await this.repository.saveSmtpConfig(configId, config);
         } catch (error) {
             console.error(`[DbService] Error saving config ${configId}:`, error.message);
@@ -29,7 +33,9 @@ class DbService {
 
     async getAllSmtpConfigs() {
         try {
-            if (!this.repository) throw new Error('Repository not initialized');
+            if (!this.repository) {
+                throw new Error('Database repository not initialized. Please call dbService.setRepository(repository) before using this service.');
+            }
             return await this.repository.getAllSmtpConfigs();
         } catch (error) {
             console.error('[DbService] Error fetching all configs:', error.message);

@@ -50,6 +50,7 @@
             font-weight: 700;
             background: linear-gradient(to right, #818cf8, #c084fc);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
@@ -304,7 +305,7 @@
         async function loadConfigForEdit(id) {
             loadingOverlay.style.display = 'flex';
             try {
-                const response = await fetch(`/api/config/${id}`);
+                const response = await fetch(`api/config/${id}`);
                 const result = await response.json();
                 if (result.success) {
                     const c = result.data;
@@ -348,7 +349,7 @@
             };
 
             try {
-                const response = await fetch('/api/config', {
+                const response = await fetch('api/config', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)

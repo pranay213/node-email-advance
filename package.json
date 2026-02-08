@@ -26,6 +26,17 @@
   ],
   "author": "Pranay",
   "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pranay213/node-email-advance.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pranay213/node-email-advance/issues"
+  },
+  "homepage": "https://github.com/pranay213/node-email-advance#readme",
   "files": [
     "src/",
     "public/",
